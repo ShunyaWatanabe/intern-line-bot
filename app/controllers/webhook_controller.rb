@@ -1,4 +1,6 @@
 require 'line/bot'
+require 'net/http'
+root = 'https://script.google.com/macros/s/AKfycbxG6-C7q0DENFz0oleSQc6P8C9jR3GDzZZx844KIv3R4KEuvD4/exec'
 
 class WebhookController < ApplicationController
   protect_from_forgery except: [:callback] # CSRF対策無効化
@@ -24,9 +26,10 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
+          res = Net::HTTP.get(root, '?text='+event.message['text']+'&source=ja&target=zh-cn')
           message = {
             type: 'text',
-            text: event.message['text']
+            text: res
           }
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
