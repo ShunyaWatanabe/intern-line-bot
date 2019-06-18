@@ -25,9 +25,11 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          root = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec?text='
-          url = URI.encode(root+event.message['text']+'&source=ja&target=zh-cn')
-          res = get_translation(URI.parse(url))
+          root = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec'
+          source = 'ja'
+          target = 'zh-cn'
+          url = URI.encode(root+'?text='+event.message['text']+'&source='+source+'&target='+target)
+          res = get_json_translation(URI.parse(url))
           message = {
             type: 'text',
             text: res['message']
@@ -48,11 +50,13 @@ class WebhookController < ApplicationController
     response = Net::HTTP.get_response(uri)
     case response
     when Net::HTTPRedirection
-      puts "here"
       get_translation(URI.parse(response["location"]))
     else
-      puts response.body
-      JSON.parse(response.body)
+      response.body
     end
+  end
+
+  def get_json_translation(uri)
+    JSON.parse(get_translation(uri)) # -> レスポンスをjsonで変換して返してくれる
   end
 end
