@@ -2,6 +2,8 @@ require 'line/bot'
 require 'net/http'
 
 class WebhookController < ApplicationController
+  SOURCE = 'ja'
+  TARGET = 'zh-cn'
   protect_from_forgery except: [:callback] # CSRF対策無効化
 
   def client
@@ -25,11 +27,9 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          root = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec'
-          source = 'ja'
-          target = 'zh-cn'
-          url = URI.encode(root+'?text='+event.message['text']+'&source='+source+'&target='+target)
-          res = get_json_translation(URI.parse(url))
+          root = ENV["TRANSLATION_ROOT_URI"]
+          uri = URI.encode(root+'?text='+event.message['text']+'&source='+SOURCE+'&target='+TARGET)
+          res = get_json_translation(URI.parse(uri))
           message = {
             type: 'text',
             text: res['message']
