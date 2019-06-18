@@ -30,7 +30,7 @@ class WebhookController < ApplicationController
           path = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec'
           params = {text: 'hello', source: 'en', target: 'ja'}
           headers = {timeout: 3000}
-          res = get_via_redirect path, params, headers
+          res = get_via_redirect(path, params, headers)
           message = {
             type: 'text',
             text: res.message
