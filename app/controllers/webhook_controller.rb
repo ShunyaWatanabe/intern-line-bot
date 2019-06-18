@@ -25,11 +25,15 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          root = 'https://script.google.com/macros/s/AKfycbxG6-C7q0DENFz0oleSQc6P8C9jR3GDzZZx844KIv3R4KEuvD4/exec'
-          res = Net::HTTP.get(root, '?text='+event.message['text']+'&source=ja&target=zh-cn')
+          # root = 'https://script.google.com/macros/s/AKfycbxG6-C7q0DENFz0oleSQc6P8C9jR3GDzZZx844KIv3R4KEuvD4/exec'
+          # res = Net::HTTP.get(root, '?text='+event.message['text']+'&source=ja&target=zh-cn')
+          path = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec'
+          params = {text: 'hello', source: 'en', target: 'ja'}
+          headers = {timeout: 3000}
+          res = get_via_redirect path, params, headers
           message = {
             type: 'text',
-            text: res
+            text: res.message
           }
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
