@@ -4,6 +4,9 @@ require 'nokogiri'
 require 'open-uri'
 
 class WebhookController < ApplicationController
+  SOURCE = 'ja'
+  TARGET = 'zh-cn'
+  ROOT = ENV["TRANSLATION_ROOT_URI"]
   protect_from_forgery except: [:callback] # CSRF対策無効化
 
   def client
@@ -31,11 +34,8 @@ class WebhookController < ApplicationController
           when '新しい単語'
             client.reply_message(event['replyToken'], format_message('test'))
           else
-            root = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec'
-            source = 'ja'
-            target = 'zh-cn'
-            url = URI.encode(root+'?text='+event.message['text']+'&source='+source+'&target='+target)
-            res = get_json_translation(URI.parse(url))
+            uri = URI.encode("#{ROOT}?text=#{event.message['text']}&source=#{SOURCE}&target=#{TARGET}")
+            res = get_json_translation(URI.parse(uri))
             client.reply_message(event['replyToken'], format_message(res['message']))
           end
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
