@@ -25,17 +25,12 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          # root = 'https://script.google.com/macros/s/AKfycbxG6-C7q0DENFz0oleSQc6P8C9jR3GDzZZx844KIv3R4KEuvD4/exec'
-          # res = Net::HTTP.get(root, '?text='+event.message['text']+'&source=ja&target=zh-cn')
-          url = 'https://script.google.com/macros/s/AKfycbxG6-C7q0DENFz0oleSQc6P8C9jR3GDzZZx844KIv3R4KEuvD4/exec?text='+event.message['text']+'&source=ja&target=zh-cn'
-          #path = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec'
-          #params = {text: 'hello', source: 'en', target: 'ja'}
-          #headers = {timeout: 3000}
-          # res = get_via_redirect(path, params, headers)
-          res = get_translation(url)
+          root = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec?text='
+          url = URI.encode(root+event.message['text']+'&source=ja&target=zh-cn')
+          res = get_translation(URI.parse(url))
           message = {
             type: 'text',
-            text: res.message
+            text: res['message']
           }
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
@@ -47,16 +42,17 @@ class WebhookController < ApplicationController
     }
     head :ok
   end
-end
 
-def get_translation(uri)
-  response = Net::HTTP.get_response(uri)
-  case response
-    return response
-  case Net::HTTPRedirection
-    get_translation(URI.parse(response["location"]))
-  else
-    # エラー処理
-    puts "error occured"
+  private
+  def get_translation(uri)
+    response = Net::HTTP.get_response(uri)
+    case response
+    when Net::HTTPRedirection
+      puts "here"
+      get_translation(URI.parse(response["location"]))
+    else
+      puts response.body
+      JSON.parse(response.body)
+    end
   end
 end
