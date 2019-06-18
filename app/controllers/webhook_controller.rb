@@ -1,5 +1,7 @@
 require 'line/bot'
 require 'net/http'
+require 'nokogiri'
+require 'open-uri'
 
 class WebhookController < ApplicationController
   protect_from_forgery except: [:callback] # CSRF対策無効化
@@ -25,16 +27,17 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          root = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec'
-          source = 'ja'
-          target = 'zh-cn'
-          url = URI.encode(root+'?text='+event.message['text']+'&source='+source+'&target='+target)
-          res = get_json_translation(URI.parse(url))
-          message = {
-            type: 'text',
-            text: res['message']
-          }
-          client.reply_message(event['replyToken'], message)
+          case event.message['text']
+          when '新しい単語'
+            client.reply_message(event['replyToken'], format_message('test'))
+          else
+            root = 'https://script.google.com/macros/s/AKfycbyw6X1KtmmNZ2IrueEvxF0yYZAXxd23-1XzY-m7fFVCSqVpqts/exec'
+            source = 'ja'
+            target = 'zh-cn'
+            url = URI.encode(root+'?text='+event.message['text']+'&source='+source+'&target='+target)
+            res = get_json_translation(URI.parse(url))
+            client.reply_message(event['replyToken'], format_message(res['message']))
+          end
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
           response = client.get_message_content(event.message['id'])
           tf = Tempfile.open("content")
@@ -46,6 +49,17 @@ class WebhookController < ApplicationController
   end
 
   private
+  def get_random_chinese()
+    puts 'get_random_chinese'
+  end
+
+  def format_message(message)
+    {
+      type: 'text',
+      text: message
+    }
+  end
+
   def get_translation(uri)
     response = Net::HTTP.get_response(uri)
     case response
