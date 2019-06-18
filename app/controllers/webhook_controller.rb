@@ -52,7 +52,7 @@ end
 def get_translation(uri)
   response = Net::HTTP.get_response(uri)
   case response
-    response
+    return response
   case Net::HTTPRedirection
     get_translation(URI.parse(response["location"]))
   else
