@@ -4,6 +4,7 @@ require 'net/http'
 class WebhookController < ApplicationController
   SOURCE = 'ja'
   TARGET = 'zh-cn'
+  ROOT = ENV["TRANSLATION_ROOT_URI"]
   protect_from_forgery except: [:callback] # CSRF対策無効化
 
   def client
@@ -27,8 +28,7 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          root = ENV["TRANSLATION_ROOT_URI"]
-          uri = URI.encode(root+'?text='+event.message['text']+'&source='+SOURCE+'&target='+TARGET)
+          uri = URI.encode("#{ROOT}?text=#{event.message['text']}&source=#{SOURCE}&target=#{TARGET}")
           res = get_json_translation(URI.parse(uri))
           message = {
             type: 'text',
