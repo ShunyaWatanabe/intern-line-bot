@@ -1,6 +1,10 @@
 require 'line/bot'
+require 'net/http'
 
 class WebhookController < ApplicationController
+  SOURCE = 'ja'
+  TARGET = 'zh-cn'
+  ROOT = ENV["TRANSLATION_ROOT_URI"]
   protect_from_forgery except: [:callback] # CSRF対策無効化
 
   def client
@@ -24,9 +28,11 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
+          uri = URI.encode("#{ROOT}?text=#{event.message['text']}&source=#{SOURCE}&target=#{TARGET}")
+          res = get_json_translation(URI.parse(uri))
           message = {
             type: 'text',
-            text: event.message['text']
+            text: res['message']
           }
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
@@ -37,5 +43,20 @@ class WebhookController < ApplicationController
       end
     }
     head :ok
+  end
+
+  private
+  def get_translation(uri)
+    response = Net::HTTP.get_response(uri)
+    case response
+    when Net::HTTPRedirection
+      get_translation(URI.parse(response["location"]))
+    else
+      response.body
+    end
+  end
+
+  def get_json_translation(uri)
+    JSON.parse(get_translation(uri)) # -> レスポンスをjsonで変換して返してくれる
   end
 end
