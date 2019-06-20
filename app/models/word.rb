@@ -7,6 +7,7 @@ class Word < ApplicationRecord
     validates :chinese, presence: true
     validates :japanese, presence: true
     validates :pinyin, presence: true
+    validates :level, presence: true
 
     def self.get_response_message(text)
         case text
