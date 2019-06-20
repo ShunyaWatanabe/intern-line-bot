@@ -10,6 +10,6 @@
 5.times do |no|
   User.create()
   Sentence.create(japanese: no.to_s, chinese: no.to_s, pinyin: no.to_s)
-  Word.create(japanese: no.to_s, chinese: no.to_s, pinyin: no.to_s, level:no+1)
+  Word.create(japanese: no.to_s, chinese: no.to_s, pinyin: no.to_s, level:3)
   RememberedWord.create(user_id: no+1, word_id: no+1)
 end
