@@ -32,7 +32,6 @@ class WebhookController < ApplicationController
         case event.type
         when Line::Bot::Event::MessageType::Text
           res = Word.get_response_message(event.message['text'])
-          # res = get_response_message(event.message['text'])
           client.reply_message(event['replyToken'], res)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
           response = client.get_message_content(event.message['id'])

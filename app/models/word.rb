@@ -3,11 +3,10 @@ class Word < ApplicationRecord
   TARGET = 'zh-cn'
   TRANSLATION_ROOT_URI = ENV["TRANSLATION_ROOT_URI"]
   CHINESE_WORDS_URI = 'http://chugokugo-script.net/tango/level3/meishi.html'
+  
   has_one :sentence
-  validates :chinese, presence: true
-  validates :japanese, presence: true
-  validates :pinyin, presence: true
-  validates :level, presence: true
+  
+  validates :chinese, :japanese,　:pinyin, :level, presence: true
 
   def self.get_response_message(text)
     if text.include?('新しい単語')
@@ -43,7 +42,7 @@ class Word < ApplicationRecord
   end
 
   def self.random_chinese_from_db(level)
-    chinese_word = Word.find(Word.where("level=?",level).pluck(:id).sample)
+    chinese_word = Word.find(Word.where(level:level).pluck(:id).sample)
     chinese_sentence = chinese_word.sentence
     {
       word: chinese_word,
