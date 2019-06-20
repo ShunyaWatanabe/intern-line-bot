@@ -31,7 +31,8 @@ class WebhookController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
-          res = get_response_message(event.message['text'])
+          res = Word.get_response_message(event.message['text'])
+          # res = get_response_message(event.message['text'])
           client.reply_message(event['replyToken'], res)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
           response = client.get_message_content(event.message['id'])
@@ -47,7 +48,7 @@ class WebhookController < ApplicationController
   def get_response_message(text)
     case text
     when '新しい単語'
-      random_chinese = get_random_chinese()
+      random_chinese = get_random_chinese
       format_message(random_chinese)
     else
       uri = URI.encode("#{TRANSLATION_ROOT_URI}?text=#{text}&source=#{SOURCE}&target=#{TARGET}")
