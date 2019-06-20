@@ -14,9 +14,15 @@ class Word < ApplicationRecord
       random_chinese = get_random_chinese(text)
       format_message(random_chinese)
     else
-      uri = URI.encode("#{TRANSLATION_ROOT_URI}?text=#{text}&source=#{SOURCE}&target=#{TARGET}")
-      translation = get_json_translation(URI.parse(uri))
-      format_message(translation['message'])
+      translation_uri = URI.encode("#{TRANSLATION_ROOT_URI}?text=#{text}&source=#{SOURCE}&target=#{TARGET}")
+      translation = get_json_translation(URI.parse(translation_uri))
+      pinyin_uri = URI.encode("https://pinyin-rest.pepebecker.com/pinyin/#{translation['message']}")
+      pinyin = get_json_translation(URI.parse(pinyin_uri))
+      message = <<~EOS
+        中国語：#{translation['message']}
+        ピンイン：#{pinyin['text']}
+      EOS
+      format_message(message.chomp)
     end
   end
 
