@@ -2,11 +2,10 @@ class Word < ApplicationRecord
   SOURCE = 'ja'
   TARGET = 'zh-cn'
   TRANSLATION_ROOT_URI = ENV["TRANSLATION_ROOT_URI"]
-  CHINESE_WORDS_URI = 'http://chugokugo-script.net/tango/level3/meishi.html'
   
   has_one :sentence
   
-  validates :chinese, :japanese,　:pinyin, :level, presence: true
+  validates :chinese, :japanese, :pinyin, :level, presence: true
 
   def self.get_response_message(text)
     if text.include?('新しい単語')
