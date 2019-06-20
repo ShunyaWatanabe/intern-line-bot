@@ -27,26 +27,22 @@ class Word < ApplicationRecord
       level = 3
     end
 
-    res = random_chinese_from_db(level)
+    word, sentence = random_chinese_from_db(level)
     message = <<~EOS
-      新しい単語：#{res[:word].chinese}
-      発音：#{res[:word].pinyin}
-      意味：#{res[:word].japanese}
+      新しい単語：#{word.chinese}
+      発音：#{word.pinyin}
+      意味：#{word.japanese}
       例文：
-    #{res[:sentence].chinese}
-    #{res[:sentence].pinyin}
-    #{res[:sentence].japanese}
+    #{sentence.chinese}
+    #{sentence.pinyin}
+    #{sentence.japanese}
     EOS
     message.chomp
   end
 
   def self.random_chinese_from_db(level)
-    chinese_word = Word.find(Word.where(level:level).pluck(:id).sample)
-    chinese_sentence = chinese_word.sentence
-    {
-      word: chinese_word,
-      sentence: chinese_sentence
-    }
+    word = Word.find(Word.where(level:level).pluck(:id).sample)
+    return word, word.sentence
   end
 
   def self.format_message(message)
