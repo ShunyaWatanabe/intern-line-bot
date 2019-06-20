@@ -22,11 +22,11 @@ class Word < ApplicationRecord
 
   private
   def self.get_random_chinese(text)
-    level = 3
-    if text.include?('2')
+    level = 1
+    if text.include?('2') or text.include?('２')
       level = 2
-    elsif text.include?('1')
-      level = 1
+    elsif text.include?('3') or text.include?('３')
+      level = 3
     end
 
     res = random_chinese_from_db(level)
