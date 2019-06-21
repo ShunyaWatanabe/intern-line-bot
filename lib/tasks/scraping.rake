@@ -21,8 +21,8 @@ namespace :scraping do
         lines = doc.xpath('//section/div[@class="divBunruiBox"]')
 
         lines.each do |line|
-          word = Word.create(chinese: line.css('.divBunruiC').inner_text, pinyin: line.css('.divBunruiP').inner_text, japanese: line.css('.divBunruiN').inner_text, level: level)
-          word.create_sentence(chinese: line.css('.divBunruiExC').inner_text, pinyin: line.css('.divBunruiExP').inner_text, japanese: line.css('.divBunruiExN').inner_text)
+          word = Word.create_with(pinyin: line.css('.divBunruiP').inner_text, japanese: line.css('.divBunruiN').inner_text, level: level).find_or_create_by(chinese: line.css('.divBunruiC').inner_text)
+          Sentence.create_with(chinese: line.css('.divBunruiExC').inner_text, pinyin: line.css('.divBunruiExP').inner_text, japanese: line.css('.divBunruiExN').inner_text).find_or_create_by(word: word)
         end
       end
     end

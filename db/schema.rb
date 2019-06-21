@@ -26,9 +26,9 @@ ActiveRecord::Schema.define(version: 20190620014243) do
 
   create_table "sentences", force: :cascade do |t|
     t.bigint "word_id"
-    t.string "chinese"
-    t.string "japanese"
-    t.string "pinyin"
+    t.string "chinese", null: false
+    t.string "japanese", null: false
+    t.string "pinyin", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["word_id"], name: "index_sentences_on_word_id"
@@ -48,9 +48,9 @@ ActiveRecord::Schema.define(version: 20190620014243) do
   end
 
   create_table "words", force: :cascade do |t|
-    t.string "chinese"
-    t.string "japanese"
-    t.string "pinyin"
+    t.string "chinese", null: false
+    t.string "japanese", null: false
+    t.string "pinyin", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "level"
