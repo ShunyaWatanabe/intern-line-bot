@@ -22,7 +22,7 @@ namespace :scraping do
 
         lines.each do |line|
           word = Word.create(chinese: line.css('.divBunruiC').inner_text, pinyin: line.css('.divBunruiP').inner_text, japanese: line.css('.divBunruiN').inner_text, level: level)
-          Sentence.create(chinese: line.css('.divBunruiExC').inner_text, pinyin: line.css('.divBunruiExP').inner_text, japanese: line.css('.divBunruiExN').inner_text, word_id: word.id)
+          word.create_sentence(chinese: line.css('.divBunruiExC').inner_text, pinyin: line.css('.divBunruiExP').inner_text, japanese: line.css('.divBunruiExN').inner_text)
         end
       end
     end

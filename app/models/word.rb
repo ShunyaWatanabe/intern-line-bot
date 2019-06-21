@@ -12,7 +12,7 @@ class Word < ApplicationRecord
       random_chinese = get_random_chinese(text)
       format_message(random_chinese)
     else
-      uri = URI.encode("#{TRANSLATION_ROOT_URI}?text=#{text}&source=#{SOURCE}&target=#{TARGET}")
+      uri = URI.encode("#{TRANSLATION_ROOT_URI}?source=#{SOURCE}&target=#{TARGET}&text=#{text}")
       translation = get_json_translation(URI.parse(uri))
       format_message(translation['message'])
     end
@@ -27,11 +27,15 @@ class Word < ApplicationRecord
       level = 3
     end
 
-    word, sentence = random_chinese_from_db(level)
+    word = random_chinese_from_db(level)
+    word.to_message
+  end
+
+  def to_message
     message = <<~EOS
-      新しい単語：#{word.chinese}
-      発音：#{word.pinyin}
-      意味：#{word.japanese}
+      新しい単語：#{chinese}
+      発音：#{pinyin}
+      意味：#{japanese}
       例文：
     #{sentence.chinese}
     #{sentence.pinyin}
@@ -41,8 +45,7 @@ class Word < ApplicationRecord
   end
 
   def self.random_chinese_from_db(level)
-    word = Word.find(Word.where(level:level).pluck(:id).sample)
-    return word, word.sentence
+    chinese_word = Word.where(level: level).sample
   end
 
   def self.format_message(message)
