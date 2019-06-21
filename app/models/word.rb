@@ -18,19 +18,6 @@ class Word < ApplicationRecord
     end
   end
 
-  private
-  def self.get_random_chinese(text)
-    level = 1
-    if text.include?('2') or text.include?('２')
-      level = 2
-    elsif text.include?('3') or text.include?('３')
-      level = 3
-    end
-
-    word = random_chinese_from_db(level)
-    word.to_message
-  end
-
   def to_message
     message = <<~EOS
       新しい単語：#{chinese}
@@ -42,6 +29,19 @@ class Word < ApplicationRecord
     #{sentence.japanese}
     EOS
     message.chomp
+  end
+  
+  private
+  def self.get_random_chinese(text)
+    level = 1
+    if text.include?('2') or text.include?('２')
+      level = 2
+    elsif text.include?('3') or text.include?('３')
+      level = 3
+    end
+
+    word = random_chinese_from_db(level)
+    word.to_message
   end
 
   def self.random_chinese_from_db(level)
