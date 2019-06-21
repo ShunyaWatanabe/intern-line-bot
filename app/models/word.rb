@@ -8,7 +8,7 @@ class Word < ApplicationRecord
   validates :chinese, :japanese, :pinyin, :level, presence: true
 
   def self.get_response_message(text)
-    if text.include?('新しい単語')
+    if text.include?('Give me a word')
       random_chinese = get_random_chinese(text)
       format_message(random_chinese)
     else
@@ -21,9 +21,9 @@ class Word < ApplicationRecord
   private
   def self.get_random_chinese(text)
     level = 1
-    if text.include?('2') or text.include?('２')
+    if text.include?('(level 2)') or text.include?('(level 2)')
       level = 2
-    elsif text.include?('3') or text.include?('３')
+    elsif text.include?('(level 3)') or text.include?('(level 2)')
       level = 3
     end
 
