@@ -23,10 +23,11 @@ class Word < ApplicationRecord
       新しい単語：#{chinese}
       発音：#{pinyin}
       意味：#{japanese}
+      レベル：#{level}
       例文：
-    #{sentence.chinese}
-    #{sentence.pinyin}
-    #{sentence.japanese}
+        #{sentence.chinese}
+        #{sentence.pinyin}
+        #{sentence.japanese}
     EOS
     message.chomp
   end
