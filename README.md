@@ -1,3 +1,7 @@
+# TO DO
+- scraping:chinese が120の単語全部取ってこないエラーがある
+- seed file をrake task 参照するに変える
+
 # 前提
 - [Heroku](https://jp.heroku.com/) のアカウントを取得済みであること。
 - Herokuの[CLIツール](https://devcenter.heroku.com/articles/getting-started-with-ruby#set-up)がインストール済みであること。
